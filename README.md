@@ -20,9 +20,9 @@
 - 5.100 ohm Resistors (24 pcs).
 - 6.3V3 voltage regulator.
 - 7. Zero Pcb.
-  8. LDR.
-  9. Pin Headers (Male and Female).
-  10. 74hc595 Shift Register (3 pcs).
+- 8. LDR.
+- 9. Pin Headers (Male and Female).
+- 10. 74hc595 Shift Register (3 pcs).
   
 ## Build
 To build your own WiFi Binary Clock, follow these steps:
