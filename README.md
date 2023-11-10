@@ -46,8 +46,6 @@ char pass[] = "your_network_password";
 
 ![App Screenshot](https://github.com/circuito-suman/BinaryInternetClock/blob/main/Pictures/4.jpg?raw=true)
 
-![App Screenshot](https://github.com/circuito-suman/BinaryInternetClock/blob/main/Pictures/CircuitDiagram.png?raw=true)
-
 ## Clock working video
 Check out this video of my project in action on Instagram:
 
