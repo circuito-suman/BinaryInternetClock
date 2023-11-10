@@ -12,7 +12,8 @@
 - **Auto-Reboot**: Periodic reboot for stable operation.
 - **Open Source**: Contribute, modify, and adapt the code and hardware design to create your variations.
 
-- ## Components Required
+ 
+## Components Required
 - 1.ESP-12F module (any ESP module should work).
 - 2.10k Resistors (4 pcs).
 - 3.Push Buttons (2 pcs).
