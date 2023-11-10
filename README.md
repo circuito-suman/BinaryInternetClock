@@ -12,6 +12,18 @@
 - **Auto-Reboot**: Periodic reboot for stable operation.
 - **Open Source**: Contribute, modify, and adapt the code and hardware design to create your variations.
 
+- ## Components Required
+- 1.ESP-12F module (any ESP module should work).
+- 2.10k Resistors (4 pcs).
+- 3.Push Buttons (2 pcs).
+- 4.LEDS any colour (24 pcs).
+- 5.100 ohm Resistors (24 pcs).
+- 6.3V3 voltage regulator.
+- 7. Zero Pcb.
+  8. LDR.
+  9. Pin Headers (Male and Female).
+  10. 74hc595 Shift Register (3 pcs).
+  
 ## Build
 To build your own WiFi Binary Clock, follow these steps:
 
