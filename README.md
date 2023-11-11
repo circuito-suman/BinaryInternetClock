@@ -5,7 +5,6 @@
 ## Features
 - **Binary Time Representation**: The clock visually represents time using a grid of LED lights in binary form for hours, minutes, and seconds.
 - **Internet Connectivity**: Automatically fetches accurate time data from an online NTP server.
-- **Customization**: Customize your clock's appearance, color schemes, and LED animations to match your style.
 - **ESP8266-Based**: Suitable for both beginners and experienced Arduino enthusiasts.
 - **User-Friendly Interface**: Easy-to-use interface for configuring your clock's settings.
 - **Brightness Control**: Automatically adjusts brightness based on the environment.
