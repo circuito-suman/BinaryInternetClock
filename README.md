@@ -1,4 +1,15 @@
+# Wifi Binary Clock
+
+<p align="center">
+  <img src="https://img.shields.io/github/issues/circuito-suman/BinaryInternetClock">
+  <img src="https://img.shields.io/github/forks/circuito-suman/BinaryInternetClock">
+  <img src="https://img.shields.io/github/stars/circuito-suman/BinaryInternetClock">
+</p>
+
+
 ![Project Logo](https://github.com/circuito-suman/BinaryInternetClock/blob/main/Pictures/Layer%201.png?raw=true) 
+
+
 
 **WiFi Binary Clock** is an ESP8266-based clock that displays the current time in a captivating binary format while staying synchronized with an online time server. This repository contains the code and resources you need to create your own unique WiFi Binary Clock.
 
