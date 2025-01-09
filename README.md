@@ -40,8 +40,8 @@ To build your own WiFi Binary Clock, follow these steps:
 
 1. Clone or download this repository to your local machine.
 2. Wire the components based on the provided circuit diagram.
-3. Set your WiFi network SSID and password in the code.
-4. Upload the code to your Arduino-compatible microcontroller.
+3. Upload the code to your Arduino-compatible microcontroller.
+4. Connect to the Ap and configure your wifi.
 5. Power up your clock and enjoy!
 
 ## Usage
@@ -51,11 +51,6 @@ Here's how to use your WiFi Binary Clock:
 2. The clock will automatically synchronize with an NTP server.
 3. Watch the mesmerizing LED lights display the current time in binary format.
 
-```cpp
-// Example code for setting WiFi SSID and password
-char ssid[] = "your_network_SSID";
-char pass[] = "your_network_password";
-```
 
 ## Photos and Circuit Diagram
 
