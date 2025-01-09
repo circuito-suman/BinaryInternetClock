@@ -6,12 +6,12 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 #include <Ticker.h>
+#include <WiFiManager.h>
 
 
+#define TRIGGER_PIN D3
 
 
-char ssid[] = "-----";      // your network SSID (name)
-char pass[] = "---------";      // your network password
 
 unsigned int localPort = 123;  // local port to listen for UDP packets
 
@@ -41,7 +41,13 @@ Ticker brightness;
 double timeZoneCorrection = 5.30;
 const int rebootEvery = 60 * 60 * 24;
 
+// wifimanager can run in a blocking mode or a non blocking mode
+// Be sure to know how to process loops with no delay() if using non blocking
+bool wm_nonblocking = false; // change to true to use non blocking
 
+
+WiFiManager wm; // global wm instance
+WiFiManagerParameter custom_field; // global param ( for non blocking w params )
 
 void bright(){
   
@@ -116,6 +122,15 @@ void tick() {
 
 }
 
+void ifwifinotconnected(){
+  digitalWrite(latchPin, LOW);
+  shiftOut(dataPin, clockPin, MSBFIRST, 0b11111111);  
+  shiftOut(dataPin, clockPin, MSBFIRST, 0);  
+  shiftOut(dataPin, clockPin, MSBFIRST, 0b11111111);  
+
+  digitalWrite(latchPin, HIGH);
+
+}
 
 void disableLeds() {
   digitalWrite(latchPin, LOW);
@@ -134,6 +149,10 @@ void setup()
 {
 
 brightness.attach_ms(25,bright);
+// Shift register pins
+  pinMode(latchPin, OUTPUT);
+  pinMode(clockPin, OUTPUT);
+  pinMode(dataPin, OUTPUT);
 
   disableLeds();
   delay(300);
@@ -143,31 +162,51 @@ brightness.attach_ms(25,bright);
 
  
 
-  // Connect to WiFi network
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, pass);
+//Wm config
+WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP  
+  Serial.setDebugOutput(true);  
+  delay(3000);
+  Serial.println("\n Starting");
+
+  pinMode(TRIGGER_PIN, INPUT);
+  if(wm_nonblocking) wm.setConfigPortalBlocking(false);
+
+  // add a custom input field
+  int customFieldLength = 40;
+
+   const char* custom_radio_str = "<br/><label for='customfieldid'>Custom Field Label</label><input type='radio' name='customfieldid' value='1' checked> One<br><input type='radio' name='customfieldid' value='2'> Two<br><input type='radio' name='customfieldid' value='3'> Three";
+  new (&custom_field) WiFiManagerParameter(custom_radio_str); // c
   
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
+   wm.addParameter(&custom_field);
+  wm.setSaveParamsCallback(saveParamCallback);
+
+
+  std::vector<const char *> menu = {"wifi","info","param","sep","restart","exit"};
+  wm.setMenu(menu);
+
+  // set dark theme
+  wm.setClass("invert");
   
-  Serial.println("WiFi connected");
+//close config portal after n seconds
+    wm.setConfigPortalTimeout(35);
+  bool res;
+
+  res = wm.autoConnect("AutoConnectAP","password"); // password protected ap
+  if(!res) {
+    Serial.println("Failed to connect or hit timeout");
+    // ESP.restart();
+  } 
+  else {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-
+  }
 
   Serial.println("Starting UDP");
   udp.begin(localPort);
   Serial.print("Local port: ");
   Serial.println(udp.localPort());
 
-  // Shift register pins
-  pinMode(latchPin, OUTPUT);
-  pinMode(clockPin, OUTPUT);
-  pinMode(dataPin, OUTPUT);   
+     
 
 
  // enable();   delay(300);
@@ -184,8 +223,62 @@ brightness.attach_ms(25,bright);
 void loop()
 {
     //Portal.handleClient();
- // Do nothing in the main loop (only using ticker callbacks)
+  if(wm_nonblocking) wm.process(); // avoid delays() in loop when non-blocking and other long running code  
+  checkButton();
+
 }
+
+
+void checkButton(){
+  // check for button press
+  if ( digitalRead(TRIGGER_PIN) == LOW ) {
+    // poor mans debounce/press-hold, code not ideal for production
+    delay(50);
+    if( digitalRead(TRIGGER_PIN) == LOW ){
+      Serial.println("Button Pressed");
+      // still holding button for 3000 ms, reset settings, code not ideaa for production
+      delay(3000); // reset delay hold
+      if( digitalRead(TRIGGER_PIN) == LOW ){
+        Serial.println("Button Held");
+        Serial.println("Erasing Config, restarting");
+        wm.resetSettings();
+        ifwifinotconnected();
+        ESP.restart();
+      }
+      
+      // start portal w delay
+      Serial.println("Starting config portal");
+      wm.setConfigPortalTimeout(120);
+      
+      if (!wm.startConfigPortal("OnDemandAP","password")) {
+        Serial.println("failed to connect or hit timeout");
+        delay(3000);
+        ifwifinotconnected();
+        // ESP.restart();
+      } else {
+        //if you get here you have connected to the WiFi
+        Serial.println("connected...yeey :)");
+      }
+    }
+  }
+}
+
+
+String getParam(String name){
+  //read parameter from server, for customhmtl input
+  String value;
+  if(wm.server->hasArg(name)) {
+    value = wm.server->arg(name);
+  }
+  return value;
+}
+
+void saveParamCallback(){
+  Serial.println("[CALLBACK] saveParamCallback fired");
+  Serial.println("PARAM customfieldid = " + getParam("customfieldid"));
+}
+
+
 
 void reboot() {
   disableLeds();
